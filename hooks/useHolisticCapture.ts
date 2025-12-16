@@ -522,7 +522,7 @@ export function useHolisticCapture({ onResults, onVisionResult }: UseHolisticCap
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
           "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "",
           "X-Title": "Signa Moz + Libras",
         },
