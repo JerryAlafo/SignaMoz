@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Signa Moz + Libras",
   description:
     "Tradução assistida por IA para Libras e Língua Gestual Moçambicana",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
