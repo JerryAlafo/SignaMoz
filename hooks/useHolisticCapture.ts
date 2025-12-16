@@ -517,7 +517,8 @@ export function useHolisticCapture({ onResults, onVisionResult }: UseHolisticCap
         max_tokens: 20,
         temperature: 0.1
       });
-      
+      console.log("Enviando imagem para análise de visão...");
+
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -527,48 +528,25 @@ export function useHolisticCapture({ onResults, onVisionResult }: UseHolisticCap
           "X-Title": "Signa Moz + Libras",
         },
         body: JSON.stringify({
-          model: "openai/gpt-4o", // Modelo com melhor capacidade de visão
+          model: "anthropic/claude-3-haiku", // Modelo com capacidade de visão
           messages: [
             {
               role: "user",
               content: [
                 {
                   type: "text",
-                  text: `Você é um especialista em reconhecimento de Libras (Linguagem Brasileira de Sinais). Analise esta imagem e identifique o gesto de linguagem de sinais.
+                  text: `You are an expert in Brazilian Sign Language (Libras) or Mozambican Sign Language recognition. Analyze this image and identify the sign language gesture.
 
-INSTRUÇÕES IMPORTANTES:
-- Foque nas mãos e sua posição/forma
-- Analise o contexto completo da imagem
-- Responda APENAS com uma palavra em português minúscula da lista abaixo
-- Se não houver gestos claros de libras ou não reconhecer, retorne "desconhecido"
+IMPORTANT INSTRUCTIONS:
+- Focus on the hands, position, shape and context
+- Analyze the image carefully
+- Respond ONLY with one lowercase Portuguese word that best describes the gesture
+- If the gesture is clear, return the most likely word (ex: olá, obrigado, comer, beber, amor, casa, ajuda, etc.)
+- If there are no clear gestures or you can't recognize, return "desconhecido"
+- Be creative but base it on what you see in the image
+- Examples: open hand waving = olá, hand on heart = amor, fingers on mouth = comer
 
-GESTOS SUPORTADOS:
-- olá (mão aberta acenando)
-- obrigado (mão aberta movendo da esquerda para direita)
-- comer (dedo indicador tocando os lábios)
-- beber (mão em formato de concha próximo à boca)
-- amor (mão aberta sobre o peito)
-- por favor (mão aberta com palma para cima)
-- eu (punho fechado batendo no peito)
-- você (dedo indicador apontando)
-- pai (mão em L na testa)
-- mãe (mão em L no queixo)
-- casa (mão aberta acima da cabeça em telhado)
-- ajuda (mãos abertas se aproximando)
-- bom (mão fechada com polegar para cima)
-- dois (dedos indicador e médio em V)
-- cinco (mão aberta com dedos juntos)
-- três (mão em C)
-- ok (polegar e indicador em círculo)
-- um (mão fechada com polegar estendido)
-
-DICAS:
-- Procure pelas mãos primeiro
-- Considere posição relativa ao corpo
-- Gestos simples geralmente usam uma mão
-- Se mãos estiverem neutras (ao lado), pode não ser gesto
-
-Responda apenas com a palavra exata ou "desconhecido".`
+Respond only with the Portuguese word in lowercase or "desconhecido".`,
                 },
                 {
                   type: "image_url",

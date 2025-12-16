@@ -51,6 +51,9 @@ export async function translateWithOpenRouter({
           headers["X-Title"] = "Signa Moz + Libras";
         }
 
+        // console.log(`Tentando modelo: ${mdl} com chave: ${key.substring(0, 10)}...`);
+        console.log(`Payload enviado:`, payload);
+
         const res = await fetch(OPENROUTER_URL, {
           method: "POST",
           headers,
@@ -61,22 +64,28 @@ export async function translateWithOpenRouter({
             messages: [
               {
                 role: "system",
-                content: `Você é um especialista em reconhecimento de linguagem de sinais. Analisará landmarks de pose, mão e rosto do MediaPipe Holistic.
+                content: `Você é um especialista em reconhecimento de linguagem de sinais. Analisará landmarks de pose, mão e rosto do MediaPipe Holistic para Libras (Brasil) ou Língua Gestual Moçambicana.
 
-IMPORTANTE: 
-- Responda APENAS com UMA palavra em português (minúsculas)
-- Analise cuidadosamente os landmarks das mãos (hands) - são os mais importantes
-- Se houver landmarks de mão claros indicando um gesto específico, identifique a palavra
-- Gestos comuns incluem: olá (mão aberta acenando), obrigado (mão aberta movendo), comer (dedos na boca), beber (mão em copo), casa (mão em telhado), ajuda (mãos abertas), amor (mãos no coração)
-- Se landmarks mostrarem mão aberta, pode ser "olá" ou "obrigado"
-- Se landmarks mostrarem mão na boca/região, pode ser "comer" ou "beber"  
-- Se landmarks mostrarem mão no peito/coração, pode ser "amor" ou "obrigado"
-- Se landmarks mostrarem mão acima da cabeça, pode ser "casa" ou "teto"
-- Se não houver landmarks de mão claros ou não corresponderem a gestos conhecidos, retorne "desconhecido"
-- NUNCA invente gestos - baseie-se apenas nos landmarks fornecidos
-- Se os dados de mão forem vazios ou muito poucos pontos, retorne "desconhecido"
+INSTRUÇÕES IMPORTANTES:
+- Responda APENAS com UMA palavra em português (minúsculas), sem acentos desnecessários
+- Analise PRIMARIAMENTE os landmarks das mãos (hands) - eles são os mais importantes
+- Se os dados de mão forem vazios ou muito poucos pontos (< 10 landmarks), retorne "desconhecido"
+- Baseie-se apenas nos landmarks fornecidos - não invente gestos
+- Gestos comuns a identificar:
+  * Mão aberta horizontal (palma para cima): "olá", "obrigado", "ajuda"
+  * Mão fechada em punho: "não", "parar"
+  * Dedos na boca: "comer", "beber", "fome"
+  * Mão no peito/coração: "amor", "eu", "mim"
+  * Mão acima da cabeça: "casa", "teto", "céu"
+  * Mão em forma de L ou V: "vitória", "paz"
+  * Mão acenando: "olá", "tchau"
+  * Dedos cruzados: "cruz", "fé"
+- Para Libras: foque em gestos brasileiros
+- Para LGM: foque em gestos moçambicanos
+- Se os landmarks mostrarem movimento ou posição clara, tente identificar
+- Se não houver correspondência exata, retorne "desconhecido"
 
-Exemplo: "olá" (não "Olá" ou "você disse olá" ou "hm, parece ser...")`,
+EXEMPLO: Para mão aberta acenando, retorne "olá"`,
               },
               {
                 role: "user",
