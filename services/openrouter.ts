@@ -1,0 +1,137 @@
+"use client";
+
+import { LANGUAGE_LABELS, SupportedLanguage } from "../types/sign-languages";
+import { GesturePayload } from "../types/payloads";
+
+export type OpenRouterRequest = {
+  apiKey?: string;
+  model: string;
+  language: SupportedLanguage;
+  payload: GesturePayload;
+};
+
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_KEY =
+  process.env.NEXT_PUBLIC_OPENROUTER_API_KEY ||
+  "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";
+
+const FALLBACK_MODELS = [
+  "openai/gpt-4o-mini",
+  "openai/gpt-4o-mini-3k",
+  "google/gemini-flash-1.5",
+  "openai/gpt-3.5-turbo",
+];
+
+export async function translateWithOpenRouter({
+  apiKey,
+  model,
+  language,
+  payload,
+}: OpenRouterRequest) {
+  const key = apiKey || DEFAULT_KEY;
+  if (!key) throw new Error("Falta a chave da OpenRouter.");
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${key}`,
+  };
+
+  if (typeof window !== "undefined") {
+    headers["HTTP-Referer"] = window.location.origin;
+    headers["X-Title"] = "Signa Moz + Libras";
+  }
+
+  const modelsToTry = [model, ...FALLBACK_MODELS].filter(Boolean);
+
+  let lastError: string | undefined;
+
+  for (const mdl of modelsToTry) {
+    try {
+      const res = await fetch(OPENROUTER_URL, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          model: mdl,
+          temperature: 0.1,
+          max_tokens: 30,
+          messages: [
+            {
+              role: "system",
+              content: `Você é um especialista em reconhecimento de linguagem de sinais. Analisará landmarks de pose, mão e rosto do MediaPipe Holistic.
+
+IMPORTANTE: 
+- Responda APENAS com UMA palavra em português (minúsculas)
+- Analise cuidadosamente os landmarks das mãos (hands) - são os mais importantes
+- Se houver landmarks de mão claros indicando um gesto específico, identifique a palavra
+- Gestos comuns incluem: olá (mão aberta acenando), obrigado (mão aberta movendo), comer (dedos na boca), beber (mão em copo), casa (mão em telhado), ajuda (mãos abertas), amor (mãos no coração)
+- Se os landmarks mostrarem mão aberta, pode ser "olá" ou "obrigado"
+- Se landmarks mostrarem mão na boca/região, pode ser "comer" ou "beber"  
+- Se landmarks mostrarem mão no peito/coração, pode ser "amor" ou "obrigado"
+- Se landmarks mostrarem mão acima da cabeça, pode ser "casa" ou "teto"
+- Se não houver landmarks de mão claros ou não corresponderem a gestos conhecidos, retorne "desconhecido"
+- NUNCA invente gestos - baseie-se apenas nos landmarks fornecidos
+- Se os dados de mão forem vazios ou muito poucos pontos, retorne "desconhecido"
+
+Exemplo: "olá" (não "Olá" ou "você disse olá" ou "hm, parece ser...")`,
+            },
+            {
+              role: "user",
+              content: `Analise estes landmarks do MediaPipe Holistic para a linguagem ${LANGUAGE_LABELS[language]} e retorne apenas a palavra que representa este gesto:
+
+MÃOS: ${payload.hands ? JSON.stringify(payload.hands).substring(0, 500) : "Nenhuma"}
+POSE: ${payload.pose ? JSON.stringify(payload.pose).substring(0, 300) : "Nenhuma"}
+
+Palavra:`,
+            },
+          ],
+        }),
+      });
+
+      if (!res.ok) {
+        lastError = await res.text();
+        continue;
+      }
+
+      const data = await res.json();
+      let word = data?.choices?.[0]?.message?.content?.trim() ?? "";
+      
+      // Se resposta vazia, continuar para próximo modelo
+      if (!word) {
+        console.warn(`Resposta vazia do modelo ${mdl}`);
+        continue;
+      }
+      
+      // Limpar a resposta
+      word = word.toLowerCase().trim();
+      
+      // Remover pontuação comum
+      word = word.replace(/[.!?,;:\-"'`]/g, "").trim();
+      
+      // Remover artigos e preposições comuns se vierem no início
+      word = word.replace(/^(o|a|os|as|um|uma|uns|umas|de|do|da|dos|das|para|por)\s+/i, "").trim();
+      
+      // Se ficou vazio após limpeza, continuar
+      if (!word) {
+        console.warn(`Resposta vazia após limpeza do modelo ${mdl}`);
+        continue;
+      }
+      
+      // Aceitar qualquer resposta não-vazia, desde que seja uma palavra válida
+      // (sem números ou caracteres especiais)
+      if (/^[a-záéíóúàâãêôõç\s]+$/i.test(word)) {
+        console.log(`Palavra detectada: "${word}"`);
+        return word;
+      }
+      
+      // Se resposta inválida, continuar para o próximo modelo
+      console.warn(`Resposta inválida: "${word}"`);
+      continue;
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : String(err);
+      continue;
+    }
+  }
+
+  throw new Error(lastError || "Erro ao consultar OpenRouter");
+}
+
