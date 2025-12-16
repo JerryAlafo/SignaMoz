@@ -535,7 +535,7 @@ export default function Home() {
                   onChange={(e) => setUseVisionAI(e.target.checked)}
                   className="rounded border-white/20 bg-slate-800"
                 />
-                Usar análise de imagem (sem câmera ao vivo)
+                Usar análise de imagem apenas com Vision AI
               </label>
             </div>
 
