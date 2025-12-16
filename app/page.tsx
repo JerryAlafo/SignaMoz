@@ -362,7 +362,7 @@ export default function Home() {
               Libras + LGM
             </span>
             <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs font-semibold text-sky-100">
-              MediaPipe + OpenRouter
+              IA Avançada
             </span>
           </div>
           <div className="flex flex-col gap-3">
@@ -370,9 +370,9 @@ export default function Home() {
               Tradução de linguagem de sinais em tempo real
             </h1>
             <p className="max-w-3xl text-lg text-slate-200">
-              Capte Libras (Brasil) ou Língua Gestual Moçambicana. A câmera lê
-              os gestos com MediaPipe e o OpenRouter devolve a palavra provável
-              — montamos a frase na hora.
+              Capte Libras (Brasil) ou Língua Gestual Moçambicana. A câmera
+              reconhece os gestos e nossa IA identifica a palavra provável —
+              montamos a frase na hora.
             </p>
           </div>
           <div className="flex flex-wrap gap-4">
@@ -535,7 +535,7 @@ export default function Home() {
                   onChange={(e) => setUseVisionAI(e.target.checked)}
                   className="rounded border-white/20 bg-slate-800"
                 />
-                Usar IA Vision (sem MediaPipe)
+                Usar análise de imagem (sem câmera ao vivo)
               </label>
             </div>
 
@@ -654,7 +654,9 @@ export default function Home() {
               <li>• Foque em gestos de libras específicos</li>
               <li>• Boa iluminação e fundo contrastante</li>
               <li>• Mãos devem estar em primeiro plano</li>
-              <li>• Ative "Usar IA Vision" para análise direta da imagem</li>
+              <li>
+                • Ative "Usar análise de imagem" para análise direta da imagem
+              </li>
             </ul>
           </div>
           <div>
@@ -666,6 +668,20 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      <footer className="mt-16 border-t border-white/10 pt-8">
+        <div className="text-center">
+          <p className="text-slate-300">
+            Problemas ou dúvidas?{" "}
+            <a
+              href="/contact"
+              className="text-emerald-400 hover:text-emerald-300 underline"
+            >
+              Entre em contacto
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

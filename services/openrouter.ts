@@ -13,7 +13,7 @@ export type OpenRouterRequest = {
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_KEY =
   process.env.NEXT_PUBLIC_OPENROUTER_API_KEY ||
-  "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";
+  "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";
 
 const FALLBACK_MODELS = [
   "openai/gpt-4o-mini",
@@ -29,7 +29,7 @@ export async function translateWithOpenRouter({
   payload,
 }: OpenRouterRequest) {
   const key = apiKey || DEFAULT_KEY;
-  if (!key) throw new Error("Falta a chave da OpenRouter.");
+  if (!key) throw new Error("Serviço temporariamente indisponível. Tente novamente mais tarde ou entre em contacto.");
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -132,6 +132,6 @@ Palavra:`,
     }
   }
 
-  throw new Error(lastError || "Erro ao consultar OpenRouter");
+  throw new Error(lastError || "Erro ao reconhecer o gesto. Tente novamente ou entre em contacto se o problema persistir.");
 }
 

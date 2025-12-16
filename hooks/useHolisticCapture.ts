@@ -588,7 +588,7 @@ Responda apenas com a palavra exata ou "desconhecido".`
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Erro da API:", response.status, errorText);
-        throw new Error(`Erro na API: ${response.status} - ${errorText}`);
+        throw new Error("Erro ao processar a imagem. Tente novamente ou entre em contacto se o problema persistir.");
       }
 
       const data = await response.json();
