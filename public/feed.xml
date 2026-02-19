@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Signa Moz - Tradução IA para Libras</title>
+  <id>https://signa-moz.vercel.app/</id>
+  <link href="https://signa-moz.vercel.app/"/>
+  <updated>2026-02-19T00:00:00Z</updated>
+  <author>
+    <name>Signa Moz</name>
+  </author>
+  <entry>
+    <title>Signa Moz: Ferramenta de Tradução para Libras e Língua Gestual Moçambicana</title>
+    <id>https://signa-moz.vercel.app/</id>
+    <published>2026-02-19T00:00:00Z</published>
+    <updated>2026-02-19T00:00:00Z</updated>
+    <summary>Tradutor assistido por IA para Libras e Língua Gestual Moçambicana com detecção de gestos em tempo real.</summary>
+    <link href="https://signa-moz.vercel.app/"/>
+  </entry>
+</feed>
