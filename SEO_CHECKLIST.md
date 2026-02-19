@@ -14,13 +14,12 @@
 
 ### Arquivos Criados
 
-- ✅ `robots.txt` - Instruções para crawlers
-- ✅ `sitemap.xml` - Mapa do site
-- ✅ `app/robots.ts` - Configuração de robots (Next.js)
-- ✅ `app/sitemap.ts` - Gerador de sitemap dinâmico
+- ✅ `app/robots.ts` - Configuração dinâmica de robots (Next.js)
+- ✅ `app/sitemap.ts` - Gerador dinâmico de sitemap (Next.js)
 - ✅ `public/manifest.json` - PWA manifest
 - ✅ `public/feed.xml` - Atom feed
 - ✅ `next.config.ts` - Otimizações Next.js
+- ✅ `middleware.ts` - Permite acesso a /robots.txt e /sitemap.xml
 
 ### Structured Data (JSON-LD)
 

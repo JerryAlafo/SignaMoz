@@ -4,13 +4,20 @@
 
 19 de Fevereiro de 2026
 
+**⚠️ Atualizações Críticas**:
+
+- Removidos arquivos estáticos conflitantes (`public/robots.txt`, `public/sitemap.xml`)
+- Corrigido `next.config.ts` removendo opções obsoletas (`swcMinify`, `optimizeFonts`, `i18n`)
+- Deploy agora funciona corretamente!
+
 ## 📊 Resumo das Mudanças
 
-- **Arquivos Modificados**: 2
-- **Arquivos Criados**: 13
+- **Arquivos Modificados**: 2 (+ 1 corrigido com bugs fixes)
+- **Arquivos Criados**: 11
+- **Arquivos Removidos**: 2 (públicos estáticos conflitantes)
 - **Total de Alterações**: 15
-- **Linhas de Código Adicionadas**: ~500+
-- **Documentação Criada**: 6 arquivos
+- **Linhas de Código Adicionadas/Removidas**: ~500+
+- **Documentação Criada**: 11 arquivos
 
 ---
 
@@ -44,44 +51,57 @@
 
 #### [next.config.ts](next.config.ts)
 
-**Mudanças**: Otimizações de SEO e performance
+**Estado**: ✅ Modificado + ✅ Corrigido (19/02/2026)
+**Mudanças Iniciais**: Otimizações de SEO e performance
+**Mudanças Corrigidas**: Removidas opções obsoletas causando erro de compilação
 
 ```diff
-+ const nextConfig: NextConfig = {
-+   images: { formats: ["image/webp", "image/avif"], ... },
-+   async headers() { ... },
-+   async redirects() { ... },
-+   compress: true,
-+   reactStrictMode: true,
-+   swcMinify: true,
-+   i18n: { locales: ["pt-BR"], ... },
-+   experimental: { ... }
-+ }
+// REMOVIDO (causava erro: "does not exist in type 'NextConfig'")
+- swcMinify: true
+- optimizeFonts: true
+- i18n: { locales: ["pt-BR", "pt"], defaultLocale: "pt-BR" }
+
+// MANTIDO
++ images: { formats: ["image/webp", "image/avif"] }
++ async headers() { ... }
++ async redirects() { ... }
++ compress: true
++ reactStrictMode: true
++ experimental: { optimizePackageImports: ["next"] }
 ```
+
+**Motivo da Remoção**:
+
+- `swcMinify`: Next.js 16 não suporta mais esta opção (SWC é padrão)
+- `optimizeFonts`: Gerenciamento de fonts é automático em Next.js 16
+- `i18n`: App Router não suporta i18n por esta opção (use bibliotecas como `next-intl`)
+
+**Resultado**: Build agora compila sem erros ✅
 
 ---
 
 ### 2️⃣ Arquivos Criados - Configuração SEO
 
-#### [public/robots.txt](public/robots.txt)
+#### [app/robots.ts](app/robots.ts) ✅ DINÂMICO
 
-**Propósito**: Instruir buscadores como indexar o site
-**Conteúdo**: User-agent rules, crawl-delay, sitemap reference
+**Propósito**: Gerar robots.txt dinamicamente
+**Aplicação**: Rota `/robots.txt` gerada automaticamente pelo Next.js
 
-#### [public/sitemap.xml](public/sitemap.xml)
+#### [app/sitemap.ts](app/sitemap.ts) ✅ DINÂMICO
 
-**Propósito**: Mapa estático do site para buscadores
-**Conteúdo**: 2 URLs (/, /contact) com metadata (lastmod, changefreq, priority)
+**Propósito**: Gerar sitemap.xml dinamicamente  
+**Aplicação**: Rota `/sitemap.xml` gerada automaticamente pelo Next.js
 
-#### [app/robots.ts](app/robots.ts)
+#### ~~[public/robots.txt](public/robots.txt)~~ ❌ REMOVIDO (19/02/2026)
 
-**Propósito**: Robots.txt dinâmico (Next.js 16)
-**Conteúdo**: Rota de API que gera robots.txt dinamicamente
+**Motivo**: Conflito com rota dinâmica - Next.js prioriza arquivo estático
+**Substituído por**: `app/robots.ts` (dinâmico)
 
-#### [app/sitemap.ts](app/sitemap.ts)
+#### ~~[public/sitemap.xml](public/sitemap.xml)~~ ❌ REMOVIDO (19/02/2026)
 
-**Propósito**: Sitemap dinâmico (Next.js 16)
-**Conteúdo**: Rota que gera sitemap.xml com URLs dinâmicas
+**Motivo**: Estava sendo servido como HTML em vez de XML válido
+**Substituído por**: `app/sitemap.ts` (dinâmico)
+**Nota**: Google Search Console reportava erro: "O seu Sitemap parece ser uma página HTML"
 
 ---
 
@@ -320,15 +340,16 @@ const nextConfig: NextConfig = {
 
 ```
 ✅ Metadados implementados (layout.tsx)
-✅ Robots.txt criado
-✅ Sitemap.xml criado
-✅ app/robots.ts criado
-✅ app/sitemap.ts criado
-✅ next.config.ts otimizado
+❌ Robots.txt REMOVIDO (dinâmico em /robots.txt)
+❌ Sitemap.xml REMOVIDO (dinâmico em /sitemap.xml)
+✅ app/robots.ts criado (gerado dinamicamente)
+✅ app/sitemap.ts criado (gerado dinamicamente)
+✅ next.config.ts corrigido (removidas opções obsoletas)
 ✅ JSON-LD schemas adicionados
 ✅ Security headers implementados
 ✅ Documentação completa criada
 ✅ Guias passo-a-passo fornecidos
+✅ Deploy no Vercel funcionando
 ```
 
 ---
@@ -393,7 +414,7 @@ git push
 │ Security Headers ............ ✅ 100%  │
 │ Documentação ................ ✅ 100%  │
 ├────────────────────────────────────────┤
-│ PRONTO PARA: Deploy + Google Search   │
+│ ✅ TUDO PRONTO - DEPLOY FUNCIONANDO   │
 └────────────────────────────────────────┘
 
 Próximo Passo: GOOGLE_BING_SETUP.md
@@ -401,6 +422,42 @@ Próximo Passo: GOOGLE_BING_SETUP.md
 
 ---
 
+## 🔧 Fixes & Correções (19/02/2026)
+
+### Problem 1: Vercel Build Failure
+
+**Erro**: `Type error: Object literal may only specify known properties, and 'swcMinify' does not exist in type 'NextConfig'`
+
+**Solução**:
+
+- Removido `swcMinify: true` (Next.js 16 não suporta)
+- Removido `optimizeFonts: true` (Next.js 16 não suporta)
+- Removido `i18n: {...}` (App Router não suporta)
+- ✅ Build agora compila sem erros
+
+### Problem 2: Sitemap HTML Error
+
+**Erro**: "O seu Sitemap parece ser uma página HTML. Utilize um formato de sitemap suportado."
+
+**Causa**: Arquivo estático `public/sitemap.xml` estava sendo servido como HTML
+
+**Solução**:
+
+- ❌ Removido `public/sitemap.xml`
+- ❌ Removido `public/robots.txt`
+- ✅ Mantido `app/sitemap.ts` (dinâmico)
+- ✅ Mantido `app/robots.ts` (dinâmico)
+- ✅ URLs dos sitemaps permanecem iguais
+
+### URLs Continuam Funcionando
+
+```
+/robots.txt ............. Gerado dinamicamente por app/robots.ts
+/sitemap.xml ............ Gerado dinamicamente por app/sitemap.ts
+```
+
+---
+
 **Criado em**: 19 de Fevereiro de 2026  
-**Status**: ✅ Pronto para Produção  
+**Status**: ✅ Pronto para Produção (Após fixes)  
 **Referência**: Manutenção de histórico de mudanças
