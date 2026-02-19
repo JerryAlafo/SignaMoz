@@ -77,18 +77,6 @@ const nextConfig: NextConfig = {
   // Enable React strict mode for development
   reactStrictMode: true,
 
-  // SWC minifier
-  swcMinify: true,
-
-  // Internationalization
-  i18n: {
-    locales: ["pt-BR", "pt"],
-    defaultLocale: "pt-BR",
-  },
-
-  // Auto-optimize fonts
-  optimizeFonts: true,
-
   // Enable experimental features
   experimental: {
     optimizePackageImports: ["next"],
