@@ -117,7 +117,8 @@ export default function RootLayout({
           // <meta name="google-site-verification" content="aYNDkUemAuUhX8RQU05xjFAR4rPaGbpT5eOJXsJfPEA" />
         />
         {/* Bing Webmaster Tools Verification */}
-        <meta name="msvalidate.01" content="your-bing-verification-code" />
+        <meta name="msvalidate.01" content="D58397AA38E4DD4B98B9560F1F294E6E" />
+        {/* <meta name="msvalidate.01" content="D58397AA38E4DD4B98B9560F1F294E6E" /> */}
         {/* Structured Data */}
         <script
           type="application/ld+json"
